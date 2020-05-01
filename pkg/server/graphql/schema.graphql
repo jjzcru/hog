@@ -1,0 +1,8 @@
+scalar Map
+scalar Time
+scalar FilePath
+
+type Query {
+    # Health check
+    health: Boolean!
+}
