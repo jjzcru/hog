@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"archive/zip"
 	"context"
 	"fmt"
 	gh "github.com/99designs/gqlgen/graphql/handler"
@@ -11,6 +12,7 @@ import (
 	"github.com/jjzcru/hog/pkg/server/graphql/generated"
 	"github.com/jjzcru/hog/pkg/utils"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -79,35 +81,34 @@ func downloadPath(w http.ResponseWriter, r *http.Request, filePath string) {
 		return
 	}
 
-	notImplemented(w, fmt.Errorf("download directory not implement yet"))
+	downloadDirectory(w, r, filePath)
 }
 
 func downloadFile(w http.ResponseWriter, r *http.Request, filePath string) {
 	file, err := os.Open(filePath)
 
 	if err != nil && err != io.EOF {
-		http.Error(w, err.Error(), 500)
+		serverError(w, err)
 		return
 	}
 
 	defer func() {
 		err = file.Close()
 		if err != nil {
-			fmt.Printf("Error: '%s'", err.Error())
+			utils.PrintError(err)
 		}
 	}()
 
 	contentType, err := getFileContentType(file)
 	if err != nil {
-		http.Error(w, err.Error(), 500)
+		serverError(w, err)
 		return
 	}
 
 	filename := filepath.Base(filePath)
 	fi, err := file.Stat()
 	if err != nil {
-		fmt.Println(err.Error())
-		http.Error(w, err.Error(), 500)
+		serverError(w, err)
 		return
 	}
 
@@ -115,6 +116,81 @@ func downloadFile(w http.ResponseWriter, r *http.Request, filePath string) {
 	w.Header().Set("content-length", fmt.Sprintf("%d", fi.Size()))
 	w.Header().Set("Content-Type", contentType)
 	http.ServeFile(w, r, filePath)
+}
+
+func downloadDirectory(w http.ResponseWriter, r *http.Request, filePath string) {
+	zipFileName := fmt.Sprintf("%s.zip", utils.GetToken())
+	zipFilePath := filepath.Join(os.TempDir(), "/", zipFileName)
+
+	zipFile, err := os.Create(zipFilePath)
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	defer func(file *os.File, filePath string) {
+		err = file.Close()
+		if err != nil {
+			utils.PrintError(err)
+		}
+
+		err = os.Remove(filePath)
+		if err != nil {
+			utils.PrintError(err)
+		}
+	}(zipFile, zipFilePath)
+
+	// Create a new zip archive.
+	zipWriter := zip.NewWriter(zipFile)
+	// Add some files to the archive.
+	addFiles(zipWriter, filePath, "")
+
+	err = zipWriter.Close()
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	filename := filepath.Base(zipFilePath)
+	fi, err := zipFile.Stat()
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	fmt.Println("File path: ", zipFilePath)
+
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	w.Header().Set("content-length", fmt.Sprintf("%d", fi.Size()))
+	w.Header().Set("Content-Type", "application/zip")
+	http.ServeFile(w, r, zipFilePath)
+}
+
+func addFiles(w *zip.Writer, basePath, baseInZip string) {
+	files, err := ioutil.ReadDir(basePath)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, file := range files {
+		if !file.IsDir() {
+			dat, err := ioutil.ReadFile(filepath.Join(basePath, file.Name()))
+			if err != nil {
+				fmt.Println(err)
+			}
+			f, err := w.Create(filepath.Join(baseInZip, file.Name()))
+			if err != nil {
+				fmt.Println(err)
+			}
+			_, err = f.Write(dat)
+			if err != nil {
+				fmt.Println(err)
+			}
+		} else if file.IsDir() {
+			newBase := filepath.Join(basePath, file.Name())
+			addFiles(w, newBase, filepath.Join(baseInZip, file.Name()))
+		}
+	}
 }
 
 func getFileContentType(out *os.File) (string, error) {

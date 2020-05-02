@@ -1,13 +1,10 @@
 package start
 
 import (
-	"crypto/md5"
-	"encoding/hex"
 	"github.com/jjzcru/hog/pkg/hog"
 	"github.com/jjzcru/hog/pkg/server"
 	"github.com/jjzcru/hog/pkg/utils"
 	"github.com/spf13/cobra"
-	"time"
 )
 
 // Command returns a cobra command for `init` sub command
@@ -61,7 +58,7 @@ func run(cmd *cobra.Command) error {
 
 	if isAuthEnable {
 		if len(token) == 0 {
-			token = getAuthToken()
+			token = utils.GetToken()
 		}
 	} else {
 		token = ""
@@ -77,10 +74,4 @@ func run(cmd *cobra.Command) error {
 	}
 
 	return server.Start(port, hogPath, isQueryEnabled, token)
-}
-
-func getAuthToken() string {
-	hasher := md5.New()
-	_, _ = hasher.Write([]byte(time.Now().Format(time.RFC3339)))
-	return hex.EncodeToString(hasher.Sum(nil))[0:22]
 }

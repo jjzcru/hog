@@ -43,6 +43,7 @@ func Start(port int, hogPath string, isQueryEnable bool, token string) error {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/download/{id}", handler.Download(hogPath))
+	r.HandleFunc("/download/{id}/", handler.Download(hogPath))
 	/*r.HandleFunc("/graphql", handler.GraphQL(token))
 	if isQueryEnable {
 	domain := h.Domain
