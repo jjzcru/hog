@@ -11,35 +11,37 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+var defaultHog = Hog{
+	Domain:   "localhost",
+	Protocol: "http",
+	Port:     1618,
+	Buckets:  map[string][]string{},
+}
+
 // Hog hold the structure of the files
 type Hog struct {
 	Domain   string              `yaml:"domain"`
 	Protocol string              `yaml:"protocol"`
 	Port     int                 `yaml:"port"`
-	Files    map[string][]string `yaml:"files"`
+	Buckets  map[string][]string `yaml:"buckets"`
 }
 
 func AddFiles(files []string) (string, error) {
 	var groupID string
-	hogPath, err := GetHogPath()
+	hogPath, err := GetPath()
 	if err != nil {
 		return groupID, err
 	}
 
-	hog := Hog{
-		Domain:   "localhost",
-		Protocol: "http",
-		Port:     1618,
-		Files:    map[string][]string{},
-	}
+	hog := defaultHog
 
 	if !utils.IsPathExist(hogPath) {
-		err := createEmptyHogFile(hogPath)
+		err := CreateEmptyHogFile(hogPath)
 		if err != nil {
 			return groupID, err
 		}
 	} else {
-		hog, err = GetHogFromPath(hogPath)
+		hog, err = FromPath(hogPath)
 		if err != nil {
 			return groupID, err
 		}
@@ -47,8 +49,8 @@ func AddFiles(files []string) (string, error) {
 
 	groupID = NewGroupID(hog)
 
-	if hog.Files == nil {
-		hog.Files = map[string][]string{}
+	if hog.Buckets == nil {
+		hog.Buckets = map[string][]string{}
 	}
 
 	if len(hog.Domain) == 0 {
@@ -63,8 +65,8 @@ func AddFiles(files []string) (string, error) {
 		hog.Port = 1618
 	}
 
-	hog.Files[groupID] = files
-	err = SaveHog(hogPath, hog)
+	hog.Buckets[groupID] = files
+	err = Save(hogPath, hog)
 	if err != nil {
 		return groupID, err
 	}
@@ -72,7 +74,7 @@ func AddFiles(files []string) (string, error) {
 	return groupID, err
 }
 
-func GetHogPath() (string, error) {
+func GetPath() (string, error) {
 	baseDir, err := GetBaseDir()
 	if err != nil {
 		return "", err
@@ -111,7 +113,7 @@ func getHomeDir() (string, error) {
 	return usr.HomeDir, nil
 }
 
-func SaveHog(hogPath string, hog Hog) error {
+func Save(hogPath string, hog Hog) error {
 	content, err := yaml.Marshal(hog)
 	if err != nil {
 		return err
@@ -120,7 +122,7 @@ func SaveHog(hogPath string, hog Hog) error {
 	return ioutil.WriteFile(hogPath, content, 0777)
 }
 
-func GetHogFromPath(hogPath string) (Hog, error) {
+func FromPath(hogPath string) (Hog, error) {
 	hog := Hog{}
 
 	content, err := ioutil.ReadFile(hogPath)
@@ -137,13 +139,13 @@ func NewGroupID(hog Hog) string {
 	var id string
 	for {
 		id = GetID()
-		if _, ok := hog.Files[id]; !ok {
+		if _, ok := hog.Buckets[id]; !ok {
 			break
 		}
 	}
 	return id
 }
 
-func createEmptyHogFile(hogPath string) error {
-	return SaveHog(hogPath, Hog{})
+func CreateEmptyHogFile(hogPath string) error {
+	return Save(hogPath, defaultHog)
 }
