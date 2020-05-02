@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
+	"github.com/jjzcru/hog/pkg/hog"
 	"github.com/jjzcru/hog/pkg/server/graphql"
 	"github.com/jjzcru/hog/pkg/server/handler"
+	"github.com/jjzcru/hog/pkg/utils"
 	"github.com/logrusorgru/aurora"
 	"log"
 	"net"
@@ -15,16 +17,35 @@ import (
 	"strings"
 )
 
-func Start(port int, filePath string, isQueryEnable bool, token string) error {
+func Start(port int, hogPath string, isQueryEnable bool, token string) error {
 	if !IsPortOpen(port) {
 		return fmt.Errorf("another application is running on port %d", port)
 	}
 
-	domain := "localhost"
+	if !utils.IsPathExist(hogPath) {
+		err := hog.CreateEmptyHogFile(hogPath)
+		if err != nil {
+			return err
+		}
+	}
+
+	h, err := hog.FromPath(hogPath)
+	if err != nil {
+		return err
+	}
+
+	h.Port = port
+
+	err = hog.Save(hogPath, h)
+	if err != nil {
+		return err
+	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/graphql", handler.GraphQL(token))
+	r.HandleFunc("/download/{id}", handler.Download(hogPath))
+	/*r.HandleFunc("/graphql", handler.GraphQL(token))
 	if isQueryEnable {
+	domain := h.Domain
 		var content string
 		r.HandleFunc("/playground", handler.Playground("/graphql"))
 		if port == 80 {
@@ -33,7 +54,7 @@ func Start(port int, filePath string, isQueryEnable bool, token string) error {
 			content = aurora.Bold(aurora.Cyan(fmt.Sprintf("http://%s:%d/playground", domain, port))).String()
 		}
 		fmt.Printf("GraphQL playground: %s \n", content)
-	}
+	}*/
 
 	if len(token) > 0 {
 		fmt.Println(strings.Join([]string{
@@ -76,7 +97,9 @@ func IsPortOpen(port int) bool {
 	defer func() {
 		if l != nil {
 			err = l.Close()
-			fmt.Println(err.Error())
+			if err != nil {
+				fmt.Println(err.Error())
+			}
 		}
 	}()
 	if err != nil {

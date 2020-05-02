@@ -5,8 +5,11 @@ import (
 	"fmt"
 	gh "github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/gorilla/mux"
+	"github.com/jjzcru/hog/pkg/hog"
 	"github.com/jjzcru/hog/pkg/server/graphql"
 	"github.com/jjzcru/hog/pkg/server/graphql/generated"
+	"github.com/jjzcru/hog/pkg/utils"
 	"io"
 	"net/http"
 	"os"
@@ -29,8 +32,57 @@ func AddAuth(next http.Handler, token string) http.HandlerFunc {
 	}
 }
 
-func DownloadFile(w http.ResponseWriter, r *http.Request) {
-	filePath := ""
+func Download(hogPath string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		vars := mux.Vars(r)
+		id := vars["id"]
+
+		h, err := hog.FromPath(hogPath)
+		if err != nil {
+			serverError(w, err)
+			return
+		}
+
+		if h.Files == nil {
+			h.Files = map[string][]string{}
+		}
+
+		if _, ok := h.Files[id]; !ok {
+			notFoundError(w, fmt.Errorf("id '%s' not found", id))
+			return
+		}
+
+		files := h.Files[id]
+		switch len(files) {
+		case 0:
+			notFoundError(w, fmt.Errorf("not files found for id '%s'", id))
+			return
+		case 1:
+			downloadPath(w, r, files[0])
+			return
+		default:
+			notImplemented(w, fmt.Errorf("multiple files not enable yet"))
+		}
+	}
+}
+
+func downloadPath(w http.ResponseWriter, r *http.Request, filePath string) {
+	isFile, err := utils.IsPathAFile(filePath)
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	if isFile {
+		downloadFile(w, r, filePath)
+		return
+	}
+
+	notImplemented(w, fmt.Errorf("download directory not implement yet"))
+}
+
+func downloadFile(w http.ResponseWriter, r *http.Request, filePath string) {
 	file, err := os.Open(filePath)
 
 	if err != nil && err != io.EOF {
@@ -40,7 +92,9 @@ func DownloadFile(w http.ResponseWriter, r *http.Request) {
 
 	defer func() {
 		err = file.Close()
-		fmt.Printf("Error: '%s'", err.Error())
+		if err != nil {
+			fmt.Printf("Error: '%s'", err.Error())
+		}
 	}()
 
 	contentType, err := getFileContentType(file)
