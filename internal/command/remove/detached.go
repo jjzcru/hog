@@ -16,5 +16,5 @@ func Detached() error {
 		return err
 	}
 
-	return nil
+	return cmd.Process.Release()
 }

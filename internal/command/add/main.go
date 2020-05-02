@@ -15,20 +15,27 @@ func Command() *cobra.Command {
 		Short: "Make file/s accessible to the service",
 		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			groupID, err := run(args)
+			bucketID, err := run(cmd, args)
 			if err != nil {
 				utils.PrintError(err)
 				return
 			}
 
-			fmt.Println(groupID)
+			fmt.Println(bucketID)
 		},
 	}
+
+	cmd.Flags().Duration("ttl", 0, "Remove a bucket after a period of time")
 
 	return cmd
 }
 
-func run(args []string) (string, error) {
+func run(cmd *cobra.Command, args []string) (string, error) {
+	ttl, err := cmd.Flags().GetDuration("ttl")
+	if err != nil {
+		return "", err
+	}
+
 	var files []string
 	for _, file := range args {
 		filePath, err := filepath.Abs(file)
@@ -42,5 +49,12 @@ func run(args []string) (string, error) {
 		files = append(files, filePath)
 	}
 
-	return hog.AddFiles(files)
+	bucketID, err := hog.AddFiles(files)
+	if err != nil {
+		return "", err
+	}
+
+	err = bucketTTL(ttl, bucketID)
+
+	return bucketID, nil
 }
