@@ -64,7 +64,8 @@ func Download(hogPath string) http.HandlerFunc {
 			downloadPath(w, r, files[0])
 			return
 		default:
-			notImplemented(w, fmt.Errorf("multiple files not enable yet"))
+			downloadMultiPath(w, r, files)
+			// notImplemented(w, fmt.Errorf("multiple files not enable yet"))
 		}
 	}
 }
@@ -166,7 +167,76 @@ func downloadDirectory(w http.ResponseWriter, r *http.Request, filePath string) 
 	http.ServeFile(w, r, zipFilePath)
 }
 
+func downloadMultiPath(w http.ResponseWriter, r *http.Request, filePaths []string) {
+	zipFileName := fmt.Sprintf("%s.zip", utils.GetToken())
+	zipFilePath := filepath.Join(os.TempDir(), "/", zipFileName)
+
+	zipFile, err := os.Create(zipFilePath)
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	defer func(file *os.File, filePath string) {
+		err = file.Close()
+		if err != nil {
+			utils.PrintError(err)
+		}
+
+		err = os.Remove(filePath)
+		if err != nil {
+			utils.PrintError(err)
+		}
+	}(zipFile, zipFilePath)
+
+	// Create a new zip archive.
+	zipWriter := zip.NewWriter(zipFile)
+	for _, filePath := range filePaths {
+		addFiles(zipWriter, filePath, filepath.Base(filePath))
+	}
+
+	err = zipWriter.Close()
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	filename := filepath.Base(zipFilePath)
+	fi, err := zipFile.Stat()
+	if err != nil {
+		serverError(w, err)
+		return
+	}
+
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	w.Header().Set("content-length", fmt.Sprintf("%d", fi.Size()))
+	w.Header().Set("Content-Type", "application/zip")
+	http.ServeFile(w, r, zipFilePath)
+}
+
 func addFiles(w *zip.Writer, basePath, baseInZip string) {
+	isFile, err := utils.IsPathAFile(basePath)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	if isFile {
+		dat, err := ioutil.ReadFile(basePath)
+		if err != nil {
+			fmt.Println(err)
+		}
+		f, err := w.Create(filepath.Base(filepath.Join("", basePath)))
+		if err != nil {
+			fmt.Println(err)
+		}
+		_, err = f.Write(dat)
+		if err != nil {
+			fmt.Println(err)
+		}
+		return
+	}
+
 	files, err := ioutil.ReadDir(basePath)
 	if err != nil {
 		fmt.Println(err)
