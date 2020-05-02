@@ -22,7 +22,6 @@ func Command() *cobra.Command {
 	}
 
 	cmd.Flags().IntP("port", "p", 1618, "Port where the server is going to run")
-	cmd.Flags().BoolP("query", "q", false, "Enables graphql playground endpoint 🎮")
 	cmd.Flags().BoolP("auth", "a", false, "Enables authorization for endpoints")
 	cmd.Flags().StringP("token", "t", "", "Set a specific token for authorization")
 	cmd.Flags().BoolP("detached", "d", false, "Run in detached mode and return the PID")
@@ -37,11 +36,6 @@ func run(cmd *cobra.Command) error {
 	}
 
 	port, err := cmd.Flags().GetInt("port")
-	if err != nil {
-		return err
-	}
-
-	isQueryEnabled, err := cmd.Flags().GetBool("query")
 	if err != nil {
 		return err
 	}
@@ -73,5 +67,5 @@ func run(cmd *cobra.Command) error {
 		return nil
 	}
 
-	return server.Start(port, hogPath, isQueryEnabled, token)
+	return server.Start(port, hogPath, token)
 }

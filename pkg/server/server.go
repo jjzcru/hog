@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/jjzcru/hog/pkg/hog"
-	"github.com/jjzcru/hog/pkg/server/graphql"
 	"github.com/jjzcru/hog/pkg/server/handler"
 	"github.com/jjzcru/hog/pkg/utils"
 	"github.com/logrusorgru/aurora"
@@ -17,7 +16,7 @@ import (
 	"strings"
 )
 
-func Start(port int, hogPath string, isQueryEnable bool, token string) error {
+func Start(port int, hogPath string, token string) error {
 	if !IsPortOpen(port) {
 		return fmt.Errorf("another application is running on port %d", port)
 	}
@@ -44,18 +43,6 @@ func Start(port int, hogPath string, isQueryEnable bool, token string) error {
 	r := mux.NewRouter()
 	r.HandleFunc("/download/{id}", handler.Download(hogPath))
 	r.HandleFunc("/download/{id}/", handler.Download(hogPath))
-	/*r.HandleFunc("/graphql", handler.GraphQL(token))
-	if isQueryEnable {
-	domain := h.Domain
-		var content string
-		r.HandleFunc("/playground", handler.Playground("/graphql"))
-		if port == 80 {
-			content = aurora.Bold(aurora.Cyan(fmt.Sprintf("http://%s/playground", domain))).String()
-		} else {
-			content = aurora.Bold(aurora.Cyan(fmt.Sprintf("http://%s:%d/playground", domain, port))).String()
-		}
-		fmt.Printf("GraphQL playground: %s \n", content)
-	}*/
 
 	if len(token) > 0 {
 		fmt.Println(strings.Join([]string{
@@ -72,7 +59,7 @@ func Start(port int, hogPath string, isQueryEnable bool, token string) error {
 	srv := &http.Server{
 		Handler: r,
 		ConnContext: func(ctx context.Context, c net.Conn) context.Context {
-			ctx = context.WithValue(ctx, graphql.TokenKey, token)
+			ctx = context.WithValue(ctx, handler.TokenKey, token)
 			return ctx
 		},
 		Addr: fmt.Sprintf(":%d", port),

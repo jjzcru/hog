@@ -4,12 +4,8 @@ import (
 	"archive/zip"
 	"context"
 	"fmt"
-	gh "github.com/99designs/gqlgen/graphql/handler"
-	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gorilla/mux"
 	"github.com/jjzcru/hog/pkg/hog"
-	"github.com/jjzcru/hog/pkg/server/graphql"
-	"github.com/jjzcru/hog/pkg/server/graphql/generated"
 	"github.com/jjzcru/hog/pkg/utils"
 	"io"
 	"io/ioutil"
@@ -18,18 +14,10 @@ import (
 	"path/filepath"
 )
 
-func GraphQL(token string) http.HandlerFunc {
-	return AddAuth(gh.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graphql.Resolver{}})), token)
-}
-
-func Playground(url string) http.HandlerFunc {
-	return playground.Handler("GraphQL Playground", url)
-}
-
 func AddAuth(next http.Handler, token string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// ctx := context.WithValue(r.Context(), graphql.TokenKey, token)
-		ctx := context.WithValue(r.Context(), graphql.AuthorizationKey, r.Header.Get("auth-token"))
+		ctx := context.WithValue(r.Context(), AuthorizationKey, r.Header.Get("auth-token"))
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 }
