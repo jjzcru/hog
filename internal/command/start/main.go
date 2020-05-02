@@ -25,7 +25,7 @@ func Command() *cobra.Command {
 	cmd.Flags().BoolP("query", "q", false, "Enables graphql playground endpoint 🎮")
 	cmd.Flags().BoolP("auth", "a", false, "Enables authorization for endpoints")
 	cmd.Flags().StringP("token", "t", "", "Set a specific token for authorization")
-	cmd.Flags().BoolP("detached", "d", false, "Run the server in detached mode and return the PID")
+	cmd.Flags().BoolP("detached", "d", false, "Run in detached mode and return the PID")
 
 	return cmd
 }
