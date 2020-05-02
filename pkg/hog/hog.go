@@ -15,7 +15,7 @@ var defaultHog = Hog{
 	Domain:   "localhost",
 	Protocol: "http",
 	Port:     1618,
-	Files:    map[string][]string{},
+	Buckets:  map[string][]string{},
 }
 
 // Hog hold the structure of the files
@@ -23,7 +23,7 @@ type Hog struct {
 	Domain   string              `yaml:"domain"`
 	Protocol string              `yaml:"protocol"`
 	Port     int                 `yaml:"port"`
-	Files    map[string][]string `yaml:"files"`
+	Buckets  map[string][]string `yaml:"buckets"`
 }
 
 func AddFiles(files []string) (string, error) {
@@ -49,8 +49,8 @@ func AddFiles(files []string) (string, error) {
 
 	groupID = NewGroupID(hog)
 
-	if hog.Files == nil {
-		hog.Files = map[string][]string{}
+	if hog.Buckets == nil {
+		hog.Buckets = map[string][]string{}
 	}
 
 	if len(hog.Domain) == 0 {
@@ -65,7 +65,7 @@ func AddFiles(files []string) (string, error) {
 		hog.Port = 1618
 	}
 
-	hog.Files[groupID] = files
+	hog.Buckets[groupID] = files
 	err = Save(hogPath, hog)
 	if err != nil {
 		return groupID, err
@@ -139,7 +139,7 @@ func NewGroupID(hog Hog) string {
 	var id string
 	for {
 		id = GetID()
-		if _, ok := hog.Files[id]; !ok {
+		if _, ok := hog.Buckets[id]; !ok {
 			break
 		}
 	}

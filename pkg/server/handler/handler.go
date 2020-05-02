@@ -46,16 +46,16 @@ func Download(hogPath string) http.HandlerFunc {
 			return
 		}
 
-		if h.Files == nil {
-			h.Files = map[string][]string{}
+		if h.Buckets == nil {
+			h.Buckets = map[string][]string{}
 		}
 
-		if _, ok := h.Files[id]; !ok {
+		if _, ok := h.Buckets[id]; !ok {
 			notFoundError(w, fmt.Errorf("id '%s' not found", id))
 			return
 		}
 
-		files := h.Files[id]
+		files := h.Buckets[id]
 		switch len(files) {
 		case 0:
 			notFoundError(w, fmt.Errorf("not files found for id '%s'", id))
