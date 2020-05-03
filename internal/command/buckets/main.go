@@ -43,8 +43,22 @@ func run() error {
 
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"Bucket", "Files"})
-	table.SetAutoMergeCells(true)
 	table.SetRowLine(true)
+	table.SetAutoMergeCells(true)
+
+	table.SetAutoWrapText(false)
+
+	table.SetHeaderColor(
+		tablewriter.Colors{tablewriter.Bold, tablewriter.FgHiWhiteColor},
+		tablewriter.Colors{tablewriter.Bold, tablewriter.FgHiWhiteColor},
+	)
+
+	table.SetColumnColor(
+		tablewriter.Colors{tablewriter.FgCyanColor},
+		tablewriter.Colors{tablewriter.FgHiWhiteColor},
+	)
+
+
 	table.AppendBulk(data)
 	table.Render()
 

@@ -101,7 +101,7 @@ func downloadFile(w http.ResponseWriter, r *http.Request, filePath string) {
 		return
 	}
 
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, filename))
 	w.Header().Set("content-length", fmt.Sprintf("%d", fi.Size()))
 	w.Header().Set("Content-Type", contentType)
 	http.ServeFile(w, r, filePath)
@@ -149,7 +149,7 @@ func downloadDirectory(w http.ResponseWriter, r *http.Request, filePath string) 
 
 	fmt.Println("File path: ", zipFilePath)
 
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, filename))
 	w.Header().Set("content-length", fmt.Sprintf("%d", fi.Size()))
 	w.Header().Set("Content-Type", "application/zip")
 	http.ServeFile(w, r, zipFilePath)
@@ -196,7 +196,7 @@ func downloadMultiPath(w http.ResponseWriter, r *http.Request, filePaths []strin
 		return
 	}
 
-	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=%s", filename))
+	w.Header().Set("Content-Disposition", fmt.Sprintf(`attachment; filename="%s"`, filename))
 	w.Header().Set("content-length", fmt.Sprintf("%d", fi.Size()))
 	w.Header().Set("Content-Type", "application/zip")
 	http.ServeFile(w, r, zipFilePath)
