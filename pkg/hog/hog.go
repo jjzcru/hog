@@ -66,7 +66,7 @@ func AddFiles(files []string) (string, error) {
 	}
 
 	hog.Buckets[groupID] = files
-	err = Save(hogPath, hog)
+	err = SaveToPath(hogPath, hog)
 	if err != nil {
 		return groupID, err
 	}
@@ -113,7 +113,35 @@ func getHomeDir() (string, error) {
 	return usr.HomeDir, nil
 }
 
-func Save(hogPath string, hog Hog) error {
+func Get() (Hog, error) {
+	var hog Hog
+	hogPath, err := GetPath()
+	if err != nil {
+		return hog, err
+	}
+
+	if !utils.IsPathExist(hogPath) {
+		return hog, fmt.Errorf("hog path '%s' do not exist", hogPath)
+	}
+
+	hog, err = FromPath(hogPath)
+	if err != nil {
+		return hog, err
+	}
+
+	return hog, nil
+}
+
+func Save(hog Hog) error {
+	hogPath, err := GetPath()
+	if err != nil {
+		return err
+	}
+
+	return SaveToPath(hogPath, hog)
+}
+
+func SaveToPath(hogPath string, hog Hog) error {
 	content, err := yaml.Marshal(hog)
 	if err != nil {
 		return err
@@ -147,5 +175,5 @@ func NewGroupID(hog Hog) string {
 }
 
 func CreateEmptyHogFile(hogPath string) error {
-	return Save(hogPath, defaultHog)
+	return SaveToPath(hogPath, defaultHog)
 }

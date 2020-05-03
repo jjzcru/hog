@@ -13,7 +13,7 @@ import (
 func Execute() error {
 	var rootCmd = &cobra.Command{
 		Use:   "hog",
-		Short: "File sharing service 🐗",
+		Short: "Share your file system 🐗",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 0 {
 				_ = cmd.Help()

@@ -35,7 +35,7 @@ func Start(port int, hogPath string, token string) error {
 
 	h.Port = port
 
-	err = hog.Save(hogPath, h)
+	err = hog.SaveToPath(hogPath, h)
 	if err != nil {
 		return err
 	}

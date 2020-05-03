@@ -1,7 +1,7 @@
 package remove
 
 import (
-"fmt"
+	"fmt"
 	"github.com/jjzcru/hog/pkg/hog"
 	"github.com/jjzcru/hog/pkg/utils"
 	"github.com/spf13/cobra"
@@ -96,16 +96,16 @@ func getHog(hogPath string) (hog.Hog, error) {
 
 }
 
-func validate(h hog.Hog, id string) error{
+func validate(h hog.Hog, id string) error {
 	if _, ok := h.Buckets[id]; !ok {
 		return fmt.Errorf("bucket with id '%s' do not exist", id)
 	}
 	return nil
 }
 
-func remove(hogPath string, h hog.Hog, id string) error{
+func remove(hogPath string, h hog.Hog, id string) error {
 	delete(h.Buckets, id)
-	return hog.Save(hogPath, h)
+	return hog.SaveToPath(hogPath, h)
 }
 
 func delayCmd(ttl time.Duration, deadline string) {
