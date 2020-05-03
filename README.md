@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.com/jjzcru/hog.svg?branch=master)](https://travis-ci.com/jjzcru/hog)
+[![Coverage Status](https://coveralls.io/repos/github/jjzcru/hog/badge.svg?branch=master)](https://coveralls.io/github/jjzcru/hog?branch=master)
+![Release](https://github.com/jjzcru/hog/workflows/Release/badge.svg?branch=master)
+
 Hog
 ==========
 
