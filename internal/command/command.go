@@ -1,6 +1,7 @@
 package command
 
 import (
+	"github.com/jjzcru/hog/internal/command/get"
 	"github.com/jjzcru/hog/internal/command/set"
 	"os"
 
@@ -33,6 +34,7 @@ func Execute() error {
 		bucket.Command(),
 		version.Command(),
 		set.Command(),
+		get.Command(),
 	)
 
 	return rootCmd.Execute()

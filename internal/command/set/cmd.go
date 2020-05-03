@@ -14,7 +14,7 @@ import (
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "set",
-		Short: "Edit hog configuration values",
+		Short: "Set hog configuration values",
 		Run: func(cmd *cobra.Command, args []string) {
 			if len(args) == 0 {
 				_ = cmd.Help()
