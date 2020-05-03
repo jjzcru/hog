@@ -2,7 +2,9 @@ package add
 
 import (
 	"fmt"
+	"os/exec"
 	"path/filepath"
+	"strings"
 
 	"github.com/jjzcru/hog/pkg/hog"
 	"github.com/jjzcru/hog/pkg/utils"
@@ -55,7 +57,21 @@ func run(cmd *cobra.Command, args []string) (string, error) {
 		return "", err
 	}
 
-	err = bucketTTL(ttl, bucketID)
+	// Evaluate TTL
+	if ttl > 0 {
+		rmvCmd := fmt.Sprintf("remove %s --ttl %s", bucketID, ttl.String())
+		cmd := exec.Command("hog", strings.Split(rmvCmd, " ")...)
+
+		err := cmd.Start()
+		if err != nil {
+			return "", err
+		}
+
+		err = cmd.Process.Release()
+		if err != nil {
+			return "", err
+		}
+	}
 
 	return bucketID, nil
 }

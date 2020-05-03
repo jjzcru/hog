@@ -159,6 +159,9 @@ func FromPath(hogPath string) (Hog, error) {
 	}
 
 	err = yaml.Unmarshal(content, &hog)
+	if err != nil {
+		return hog, err
+	}
 
 	return hog, nil
 }
