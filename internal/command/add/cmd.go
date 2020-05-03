@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Command returns a cobra command for `init` sub command
+// Command returns a cobra command for `add` sub command
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add",
