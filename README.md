@@ -19,6 +19,7 @@ Since it's written in [Go][go], most of the commands runs across multiple operat
 ## Table of contents
   * [Getting Started](#getting-started)
     + [Installation](#installation)
+    + [Usage](#usage)
   * [Syntax](#syntax)
   * [Use Cases](#use-cases)
   * [Commands](#commands)
@@ -58,6 +59,46 @@ curl -sf https://gobinaries.com/jjzcru/hog | sh
 are on `windows` you can ignore this step.
 3. Add the binary to `$PATH`.
 4. Run `hog version` to make sure that the binary is installed.
+
+### Usage
+
+#### Start Server
+
+First you need to start the server so the application is able to serve the files.
+
+```
+hog start -d
+```
+
+By default the application will run at port `1618` and the endpoint for download is `/download/{BucketID}`. For more information about how the `start` command works go to [start][start] documentation.
+
+#### Add files
+
+Now you need to add files to serve, for this go to your terminal and navigate to file or directory that you want to
+share and run the `add` command. 
+```
+hog add file.png ./file.jpg /home/root/file.pdf
+```
+
+You can add multiple files which are going to be group together as a bucket, you can add relative path, name of files
+or directories or absolute paths. This command will return the `BucketID` that was created.
+
+#### Share your bucket
+
+To share, after you run the `add` command, you need to use the `BucketID` to generate the link. Lets say that the server 
+is running on port `1618` and the `BucketID` generated is `2iez0Wa`. Now you just need to create a url that targets
+your computer in that port.
+
+```
+// For localhost
+http://localhost:1618/download/2iez0Wa 
+
+// For IP
+http://192.168.1.101:1618/download/2iez0Wa
+
+// For domain
+http://my.domain.com:1618/download/2iez0Wa
+```
 
 ## Syntax
 The syntax consists of:
