@@ -16,3 +16,9 @@
 - **[start]** Create documentation
 - **[update]** Create documentation
 - **[version]** Create documentation
+
+**Misc 👾:**
+- Add code coverage
+- Add badge for Travis CI Build
+- Add badge for Coverall
+- Add badge for Github Action Release
