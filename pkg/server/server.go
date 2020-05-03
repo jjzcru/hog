@@ -4,8 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/gorilla/mux"
-	"github.com/jjzcru/hog/pkg/server/graphql"
+	"github.com/jjzcru/hog/pkg/hog"
 	"github.com/jjzcru/hog/pkg/server/handler"
+	"github.com/jjzcru/hog/pkg/utils"
 	"github.com/logrusorgru/aurora"
 	"log"
 	"net"
@@ -15,25 +16,33 @@ import (
 	"strings"
 )
 
-func Start(port int, filePath string, isQueryEnable bool, token string) error {
+func Start(port int, hogPath string, token string) error {
 	if !IsPortOpen(port) {
 		return fmt.Errorf("another application is running on port %d", port)
 	}
 
-	domain := "localhost"
+	if !utils.IsPathExist(hogPath) {
+		err := hog.CreateEmptyHogFile(hogPath)
+		if err != nil {
+			return err
+		}
+	}
+
+	h, err := hog.FromPath(hogPath)
+	if err != nil {
+		return err
+	}
+
+	h.Port = port
+
+	err = hog.SaveToPath(hogPath, h)
+	if err != nil {
+		return err
+	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/graphql", handler.GraphQL(token))
-	if isQueryEnable {
-		var content string
-		r.HandleFunc("/playground", handler.Playground("/graphql"))
-		if port == 80 {
-			content = aurora.Bold(aurora.Cyan(fmt.Sprintf("http://%s/playground", domain))).String()
-		} else {
-			content = aurora.Bold(aurora.Cyan(fmt.Sprintf("http://%s:%d/playground", domain, port))).String()
-		}
-		fmt.Printf("GraphQL playground: %s \n", content)
-	}
+	r.HandleFunc("/download/{id}", handler.Download(hogPath))
+	r.HandleFunc("/download/{id}/", handler.Download(hogPath))
 
 	if len(token) > 0 {
 		fmt.Println(strings.Join([]string{
@@ -50,7 +59,7 @@ func Start(port int, filePath string, isQueryEnable bool, token string) error {
 	srv := &http.Server{
 		Handler: r,
 		ConnContext: func(ctx context.Context, c net.Conn) context.Context {
-			ctx = context.WithValue(ctx, graphql.TokenKey, token)
+			ctx = context.WithValue(ctx, handler.TokenKey, token)
 			return ctx
 		},
 		Addr: fmt.Sprintf(":%d", port),
@@ -76,12 +85,11 @@ func IsPortOpen(port int) bool {
 	defer func() {
 		if l != nil {
 			err = l.Close()
-			fmt.Println(err.Error())
+			if err != nil {
+				fmt.Println(err.Error())
+			}
 		}
 	}()
-	if err != nil {
-		return false
-	}
 
-	return true
+	return err == nil
 }

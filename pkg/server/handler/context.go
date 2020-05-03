@@ -1,4 +1,4 @@
-package graphql
+package handler
 
 type ContextKey int
 
