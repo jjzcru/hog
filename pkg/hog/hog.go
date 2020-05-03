@@ -47,7 +47,7 @@ func AddFiles(files []string) (string, error) {
 		}
 	}
 
-	groupID = NewGroupID(hog)
+	groupID = newGroupID(hog)
 
 	if hog.Buckets == nil {
 		hog.Buckets = map[string][]string{}
@@ -166,7 +166,7 @@ func FromPath(hogPath string) (Hog, error) {
 	return hog, nil
 }
 
-func NewGroupID(hog Hog) string {
+func newGroupID(hog Hog) string {
 	var id string
 	for {
 		id = GetID()
