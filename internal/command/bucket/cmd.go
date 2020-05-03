@@ -84,6 +84,9 @@ func getHog(hogPath string) (hog.Hog, error) {
 func transform(h hog.Hog) [][]string {
 	var table [][]string
 	for id, files := range h.Buckets {
+		if len(files) == 0 {
+			table = append(table, []string{id, "EMPTY"})
+		}
 		for _, file := range files {
 			table = append(table, []string{id, file})
 		}
