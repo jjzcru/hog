@@ -1,13 +1,15 @@
 package command
 
 import (
+	"os"
+
 	"github.com/jjzcru/hog/internal/command/add"
 	"github.com/jjzcru/hog/internal/command/bucket"
 	"github.com/jjzcru/hog/internal/command/remove"
 	"github.com/jjzcru/hog/internal/command/start"
 	"github.com/jjzcru/hog/internal/command/update"
+	"github.com/jjzcru/hog/internal/command/version"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 func Execute() error {
@@ -28,6 +30,7 @@ func Execute() error {
 		update.Command(),
 		start.Command(),
 		bucket.Command(),
+		version.Command(),
 	)
 
 	return rootCmd.Execute()
