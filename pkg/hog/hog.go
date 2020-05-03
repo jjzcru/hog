@@ -11,6 +11,8 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+var FILE = ".hog.yml"
+
 var defaultHog = Hog{
 	Domain:   "localhost",
 	Protocol: "http",
@@ -80,7 +82,7 @@ func GetPath() (string, error) {
 		return "", err
 	}
 
-	return path.Join(baseDir, "hog.yml"), nil
+	return path.Join(baseDir, FILE), nil
 }
 
 func GetBaseDir() (string, error) {

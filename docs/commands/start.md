@@ -8,7 +8,7 @@ Start hog service
 hog start [flags]
 ```
 
-This command use the `hog.yml` file to fetch the bucket ids that are going to be serve to download.
+This command use the `.hog.yml` file to fetch the bucket ids that are going to be serve to download.
 To download any bucket you need to call the endpoint `/download/{BucketID}` depending on the amount of files and 
 the path the download is going to be as following:
 

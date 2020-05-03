@@ -8,7 +8,7 @@ Remove a bucket by its id
 hog remove {id} [flags]
 ```
 
-This command takes only one id as argument. It will check if the bucket exists inside `hog.yml` and will remove the 
+This command takes only one id as argument. It will check if the bucket exists inside `.hog.yml` and will remove the 
 reference from the file. By default this command runs immediately, if you which to delay the deletion use one of the 
 flags described below.
 

@@ -31,7 +31,7 @@ Since it's written in [Go][go], most of the commands runs across multiple operat
 The main use case for `hog` is that you are able to share your files with other people directly from your machine
 without any intermediary _(Dropbox, Google Drive, WeTransfer)_.
 
-`hog` uses a file called `hog.yml` to store the references from your files, by default this file is located in your
+`hog` uses a file called `.hog.yml` to store the references from your files, by default this file is located in your
 home directory but you can change the directory used by `hog` by setting the `env` variable `HOG_PEN`. 
 
 `hog` groups your files in `buckets` which are just a list of paths inside your file system for the files you would

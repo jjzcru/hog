@@ -42,7 +42,7 @@ func TestGetPath(t *testing.T) {
 		t.Error(err)
 	}
 
-	targetHogPath, err := filepath.Abs(filepath.Join(os.TempDir(), "hog.yml"))
+	targetHogPath, err := filepath.Abs(filepath.Join(os.TempDir(), FILE))
 	if err != nil {
 		t.Error(err)
 	}
