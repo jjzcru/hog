@@ -2,17 +2,18 @@ package remove
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/jjzcru/hog/pkg/hog"
 	"github.com/jjzcru/hog/pkg/utils"
 	"github.com/spf13/cobra"
-	"time"
 )
 
 // Command returns a cobra command for `init` sub command
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "remove",
-		Short: "Remove file reference by id",
+		Short: "Remove a bucket by its id",
 		Args:  cobra.ExactArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			err := run(cmd, args[0])
@@ -23,8 +24,8 @@ func Command() *cobra.Command {
 	}
 
 	cmd.Flags().Duration("ttl", 0, "Remove a bucket after a period of time")
-	cmd.Flags().String("deadline", "", "Remove a bucket a particular time")
-	cmd.Flags().BoolP("detached", "d", false, "")
+	cmd.Flags().String("deadline", "", "Remove a bucket at a particular time")
+	cmd.Flags().BoolP("detached", "d", false, "Run the command in detached mode")
 	return cmd
 }
 

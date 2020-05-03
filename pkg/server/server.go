@@ -90,9 +90,6 @@ func IsPortOpen(port int) bool {
 			}
 		}
 	}()
-	if err != nil {
-		return false
-	}
 
-	return true
+	return err == nil
 }

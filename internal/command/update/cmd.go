@@ -2,17 +2,18 @@ package update
 
 import (
 	"fmt"
+	"path/filepath"
+
 	"github.com/jjzcru/hog/pkg/hog"
 	"github.com/jjzcru/hog/pkg/utils"
 	"github.com/spf13/cobra"
-	"path/filepath"
 )
 
 // Command returns a cobra command for `init` sub command
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
-		Short: "Update file reference by its id",
+		Short: "Update the files in a bucket by its id",
 		Args:  cobra.MinimumNArgs(2),
 		Run: func(cmd *cobra.Command, args []string) {
 			id := args[0]

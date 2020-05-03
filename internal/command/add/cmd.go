@@ -2,17 +2,20 @@ package add
 
 import (
 	"fmt"
+	"os/exec"
+	"path/filepath"
+	"strings"
+
 	"github.com/jjzcru/hog/pkg/hog"
 	"github.com/jjzcru/hog/pkg/utils"
 	"github.com/spf13/cobra"
-	"path/filepath"
 )
 
 // Command returns a cobra command for `init` sub command
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add",
-		Short: "Make file/s accessible to the service",
+		Short: "Group files in a bucket",
 		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			bucketID, err := run(cmd, args)
@@ -54,7 +57,21 @@ func run(cmd *cobra.Command, args []string) (string, error) {
 		return "", err
 	}
 
-	err = bucketTTL(ttl, bucketID)
+	// Evaluate TTL
+	if ttl > 0 {
+		rmvCmd := fmt.Sprintf("remove %s --ttl %s", bucketID, ttl.String())
+		cmd := exec.Command("hog", strings.Split(rmvCmd, " ")...)
+
+		err := cmd.Start()
+		if err != nil {
+			return "", err
+		}
+
+		err = cmd.Process.Release()
+		if err != nil {
+			return "", err
+		}
+	}
 
 	return bucketID, nil
 }

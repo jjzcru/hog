@@ -1,13 +1,23 @@
 package main
 
 import (
+	OS "os"
+
+	v "github.com/jjzcru/hog/internal/command/version"
 	"github.com/jjzcru/hog/internal/command"
-	"os"
 )
 
+var version = ""
+var os = ""
+var arch = ""
+var commit = ""
+var date = ""
+var goversion = ""
+
 func main() {
+	v.SetVersion(version, os, arch, commit, date, goversion)
 	err := command.Execute()
 	if err != nil {
-		os.Exit(1)
+		OS.Exit(1)
 	}
 }
