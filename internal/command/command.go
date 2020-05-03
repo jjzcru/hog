@@ -2,7 +2,7 @@ package command
 
 import (
 	"github.com/jjzcru/hog/internal/command/add"
-	"github.com/jjzcru/hog/internal/command/buckets"
+	"github.com/jjzcru/hog/internal/command/bucket"
 	"github.com/jjzcru/hog/internal/command/remove"
 	"github.com/jjzcru/hog/internal/command/start"
 	"github.com/jjzcru/hog/internal/command/update"
@@ -27,7 +27,7 @@ func Execute() error {
 		remove.Command(),
 		update.Command(),
 		start.Command(),
-		buckets.Command(),
+		bucket.Command(),
 	)
 
 	return rootCmd.Execute()

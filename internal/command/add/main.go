@@ -2,17 +2,18 @@ package add
 
 import (
 	"fmt"
+	"path/filepath"
+
 	"github.com/jjzcru/hog/pkg/hog"
 	"github.com/jjzcru/hog/pkg/utils"
 	"github.com/spf13/cobra"
-	"path/filepath"
 )
 
 // Command returns a cobra command for `init` sub command
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add",
-		Short: "Make file/s accessible to the service",
+		Short: "Group files in a bucket",
 		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
 			bucketID, err := run(cmd, args)

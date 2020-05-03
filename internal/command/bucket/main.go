@@ -1,19 +1,20 @@
-package buckets
+package bucket
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/jjzcru/hog/pkg/hog"
 	"github.com/jjzcru/hog/pkg/utils"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 // Command returns a cobra command for `init` sub command
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "buckets",
-		Short: "Return a list of all the buckets",
+		Use:   "bucket",
+		Short: "Display the buckets and their files",
 		Args:  cobra.NoArgs,
 		Run: func(cmd *cobra.Command, args []string) {
 			err := run()
@@ -57,7 +58,6 @@ func run() error {
 		tablewriter.Colors{tablewriter.FgCyanColor},
 		tablewriter.Colors{tablewriter.FgHiWhiteColor},
 	)
-
 
 	table.AppendBulk(data)
 	table.Render()
