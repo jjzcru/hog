@@ -15,7 +15,7 @@ func TestGetBaseDir(t *testing.T) {
 		t.Error(err)
 	}
 
-	baseDir, err := GetBaseDir()
+	baseDir, err := BaseDir()
 	if err != nil {
 		t.Error(err)
 	}
@@ -25,7 +25,7 @@ func TestGetBaseDir(t *testing.T) {
 	}
 
 	_ = os.Setenv("HOG_PEN", fmt.Sprintf("%s/%s", os.TempDir(), time.Now().String()))
-	_, err = GetBaseDir()
+	_, err = BaseDir()
 	if err == nil {
 		t.Error("it should throw an error because the directory do not exist")
 	}
@@ -37,12 +37,12 @@ func TestGetPath(t *testing.T) {
 		t.Error(err)
 	}
 
-	hogPath, err := GetPath()
+	hogPath, err := Path()
 	if err != nil {
 		t.Error(err)
 	}
 
-	targetHogPath, err := filepath.Abs(filepath.Join(os.TempDir(), "hog.yml"))
+	targetHogPath, err := filepath.Abs(filepath.Join(os.TempDir(), FILE))
 	if err != nil {
 		t.Error(err)
 	}
@@ -64,7 +64,7 @@ func TestAddFilesEmpty(t *testing.T) {
 	}
 
 	defer func() {
-		hogPath, _ := GetPath()
+		hogPath, _ := Path()
 		_ = os.Remove(hogPath)
 	}()
 
@@ -95,7 +95,7 @@ func TestFromPath(t *testing.T) {
 		t.Error(err)
 	}
 
-	hogPath, err := GetPath()
+	hogPath, err := Path()
 	if err != nil {
 		t.Error(err)
 	}
@@ -147,7 +147,7 @@ func TestSave(t *testing.T) {
 	}
 
 	defer func() {
-		hogPath, _ := GetPath()
+		hogPath, _ := Path()
 		_ = os.Remove(hogPath)
 	}()
 

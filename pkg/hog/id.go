@@ -11,6 +11,7 @@ func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
+// GetID returns a random id
 func GetID() string {
 	return randStringRunes(7)
 }

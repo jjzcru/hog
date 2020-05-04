@@ -11,30 +11,36 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Command returns a cobra command for `init` sub command
+// Command returns a cobra command for `add` sub command
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "add",
 		Short: "Group files in a bucket",
 		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			bucketID, err := run(cmd, args)
+			response, err := run(cmd, args)
 			if err != nil {
 				utils.PrintError(err)
 				return
 			}
 
-			fmt.Println(bucketID)
+			fmt.Println(response)
 		},
 	}
 
 	cmd.Flags().Duration("ttl", 0, "Remove a bucket after a period of time")
+	cmd.Flags().BoolP("url", "u", false, "Return a share url as response")
 
 	return cmd
 }
 
 func run(cmd *cobra.Command, args []string) (string, error) {
 	ttl, err := cmd.Flags().GetDuration("ttl")
+	if err != nil {
+		return "", err
+	}
+
+	isUrl, err := cmd.Flags().GetBool("url")
 	if err != nil {
 		return "", err
 	}
@@ -71,6 +77,15 @@ func run(cmd *cobra.Command, args []string) (string, error) {
 		if err != nil {
 			return "", err
 		}
+	}
+
+	if isUrl {
+		h, err := hog.Get()
+		if err != nil {
+			return "", err
+		}
+
+		return fmt.Sprintf("%s://%s:%d/download/%s", h.Protocol, h.Domain, h.Port, bucketID), nil
 	}
 
 	return bucketID, nil

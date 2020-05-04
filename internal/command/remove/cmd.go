@@ -9,14 +9,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Command returns a cobra command for `init` sub command
+// Command returns a cobra command for `remove` sub command
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "remove",
 		Short: "Remove a bucket by its id",
-		Args:  cobra.ExactArgs(1),
+		Args:  cobra.MinimumNArgs(1),
 		Run: func(cmd *cobra.Command, args []string) {
-			err := run(cmd, args[0])
+			err := run(cmd, args)
 			if err != nil {
 				utils.PrintError(err)
 			}
@@ -29,7 +29,7 @@ func Command() *cobra.Command {
 	return cmd
 }
 
-func run(cmd *cobra.Command, id string) error {
+func run(cmd *cobra.Command, ids []string) error {
 	isDetached, err := cmd.Flags().GetBool("detached")
 	if err != nil {
 		return err
@@ -45,7 +45,7 @@ func run(cmd *cobra.Command, id string) error {
 		return err
 	}
 
-	hogPath, err := hog.GetPath()
+	hogPath, err := hog.Path()
 	if err != nil {
 		return err
 	}
@@ -66,11 +66,16 @@ func run(cmd *cobra.Command, id string) error {
 			return fmt.Errorf("deadline can't be before of current time")
 		}
 	}
-
-	err = validate(h, id)
-	if err != nil {
-		return err
+	var bucketIds []string
+	for _, id := range ids {
+		bucketID, err := getBucketIds(h, id)
+		if err != nil {
+			return err
+		}
+		bucketIds = append(bucketIds, bucketID...)
 	}
+
+	bucketIds = utils.RemoveDuplicate(bucketIds)
 
 	if isDetached {
 		return Detached()
@@ -78,7 +83,23 @@ func run(cmd *cobra.Command, id string) error {
 
 	delayCmd(ttl, deadline)
 
-	return remove(hogPath, h, id)
+	return remove(hogPath, h, bucketIds)
+}
+
+func getBucketIds(h hog.Hog, id string) ([]string, error) {
+	var ids []string
+	for k := range h.Buckets {
+		isSubstring, err := utils.IsSubstring(id, k)
+		if err != nil {
+			return ids, err
+		}
+
+		if isSubstring {
+			ids = append(ids, k)
+		}
+	}
+
+	return ids, nil
 }
 
 func getHog(hogPath string) (hog.Hog, error) {
@@ -97,15 +118,12 @@ func getHog(hogPath string) (hog.Hog, error) {
 
 }
 
-func validate(h hog.Hog, id string) error {
-	if _, ok := h.Buckets[id]; !ok {
-		return fmt.Errorf("bucket with id '%s' do not exist", id)
-	}
-	return nil
-}
+func remove(hogPath string, h hog.Hog, ids []string) error {
 
-func remove(hogPath string, h hog.Hog, id string) error {
-	delete(h.Buckets, id)
+	for _, id := range ids {
+		delete(h.Buckets, id)
+	}
+
 	return hog.SaveToPath(hogPath, h)
 }
 

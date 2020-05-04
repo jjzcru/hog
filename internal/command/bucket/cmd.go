@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Command returns a cobra command for `init` sub command
+// Command returns a cobra command for `bucket` sub command
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "bucket",
@@ -30,7 +30,7 @@ func Command() *cobra.Command {
 
 func run() error {
 
-	hogPath, err := hog.GetPath()
+	hogPath, err := hog.Path()
 	if err != nil {
 		return err
 	}
@@ -84,6 +84,9 @@ func getHog(hogPath string) (hog.Hog, error) {
 func transform(h hog.Hog) [][]string {
 	var table [][]string
 	for id, files := range h.Buckets {
+		if len(files) == 0 {
+			table = append(table, []string{id, "EMPTY"})
+		}
 		for _, file := range files {
 			table = append(table, []string{id, file})
 		}

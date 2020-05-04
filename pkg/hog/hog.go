@@ -11,6 +11,9 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
+// FILE name of the hog configuration file
+var FILE = ".hog.yml"
+
 var defaultHog = Hog{
 	Domain:   "localhost",
 	Protocol: "http",
@@ -26,9 +29,10 @@ type Hog struct {
 	Buckets  map[string][]string `yaml:"buckets"`
 }
 
+// AddFiles to the hog file and return the bucket id
 func AddFiles(files []string) (string, error) {
 	var groupID string
-	hogPath, err := GetPath()
+	hogPath, err := Path()
 	if err != nil {
 		return groupID, err
 	}
@@ -74,16 +78,18 @@ func AddFiles(files []string) (string, error) {
 	return groupID, err
 }
 
-func GetPath() (string, error) {
-	baseDir, err := GetBaseDir()
+// Path return the path of the hog file
+func Path() (string, error) {
+	baseDir, err := BaseDir()
 	if err != nil {
 		return "", err
 	}
 
-	return path.Join(baseDir, "hog.yml"), nil
+	return path.Join(baseDir, FILE), nil
 }
 
-func GetBaseDir() (string, error) {
+// BaseDir return the path of the directory that contains the hog file
+func BaseDir() (string, error) {
 	hogPen := os.Getenv("HOG_PEN")
 	if len(hogPen) == 0 {
 		return getHomeDir()
@@ -113,9 +119,10 @@ func getHomeDir() (string, error) {
 	return usr.HomeDir, nil
 }
 
+// Get the hog object from the hog path
 func Get() (Hog, error) {
 	var hog Hog
-	hogPath, err := GetPath()
+	hogPath, err := Path()
 	if err != nil {
 		return hog, err
 	}
@@ -132,8 +139,9 @@ func Get() (Hog, error) {
 	return hog, nil
 }
 
+// Save a hog object in the default hog path
 func Save(hog Hog) error {
-	hogPath, err := GetPath()
+	hogPath, err := Path()
 	if err != nil {
 		return err
 	}
@@ -141,6 +149,7 @@ func Save(hog Hog) error {
 	return SaveToPath(hogPath, hog)
 }
 
+// SaveToPath saves a hog object in a specific path
 func SaveToPath(hogPath string, hog Hog) error {
 	content, err := yaml.Marshal(hog)
 	if err != nil {
@@ -150,6 +159,7 @@ func SaveToPath(hogPath string, hog Hog) error {
 	return ioutil.WriteFile(hogPath, content, 0777)
 }
 
+// FromPath load a hog object from an specific path
 func FromPath(hogPath string) (Hog, error) {
 	hog := Hog{}
 
@@ -177,6 +187,7 @@ func newGroupID(hog Hog) string {
 	return id
 }
 
+// CreateEmptyHogFile create a default hog object in the default hog path
 func CreateEmptyHogFile(hogPath string) error {
 	return SaveToPath(hogPath, defaultHog)
 }

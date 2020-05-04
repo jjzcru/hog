@@ -3,17 +3,18 @@ package server
 import (
 	"context"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/jjzcru/hog/pkg/hog"
-	"github.com/jjzcru/hog/pkg/server/handler"
-	"github.com/jjzcru/hog/pkg/utils"
-	"github.com/logrusorgru/aurora"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	"strings"
+
+	"github.com/gorilla/mux"
+	"github.com/jjzcru/hog/pkg/hog"
+	"github.com/jjzcru/hog/pkg/server/handler"
+	"github.com/jjzcru/hog/pkg/utils"
+	"github.com/logrusorgru/aurora"
 )
 
 func Start(port int, hogPath string, token string) error {
