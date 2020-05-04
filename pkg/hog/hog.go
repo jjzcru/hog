@@ -191,3 +191,14 @@ func newGroupID(hog Hog) string {
 func CreateEmptyHogFile(hogPath string) error {
 	return SaveToPath(hogPath, defaultHog)
 }
+
+// Url from a hog object
+func Url(hog Hog, id string) string {
+	return fmt.Sprintf(
+		"%s://%s:%d/download/%s",
+		hog.Protocol,
+		hog.Domain,
+		hog.Port,
+		id,
+	)
+}

@@ -3,6 +3,7 @@ package command
 import (
 	"github.com/jjzcru/hog/internal/command/get"
 	"github.com/jjzcru/hog/internal/command/set"
+	"github.com/jjzcru/hog/internal/command/share"
 	"os"
 
 	"github.com/jjzcru/hog/internal/command/add"
@@ -35,6 +36,7 @@ func Execute() error {
 		version.Command(),
 		set.Command(),
 		get.Command(),
+		share.Command(),
 	)
 
 	return rootCmd.Execute()
