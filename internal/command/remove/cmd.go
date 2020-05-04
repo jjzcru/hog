@@ -45,7 +45,7 @@ func run(cmd *cobra.Command, ids []string) error {
 		return err
 	}
 
-	hogPath, err := hog.GetPath()
+	hogPath, err := hog.Path()
 	if err != nil {
 		return err
 	}

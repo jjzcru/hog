@@ -64,7 +64,7 @@ func run(cmd *cobra.Command) error {
 		return detached(token)
 	}
 
-	hogPath, err := hog.GetPath()
+	hogPath, err := hog.Path()
 	if err != nil {
 		return nil
 	}

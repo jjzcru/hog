@@ -30,7 +30,7 @@ func Command() *cobra.Command {
 
 func run() error {
 
-	hogPath, err := hog.GetPath()
+	hogPath, err := hog.Path()
 	if err != nil {
 		return err
 	}
