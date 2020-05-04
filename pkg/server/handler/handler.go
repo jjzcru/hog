@@ -22,6 +22,12 @@ func AddAuth(next http.Handler, token string) http.HandlerFunc {
 	}
 }
 
+func Qr(hogPath string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+
+	}
+}
+
 func Download(hogPath string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error

@@ -2,12 +2,14 @@ package add
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 
 	"github.com/jjzcru/hog/pkg/hog"
 	"github.com/jjzcru/hog/pkg/utils"
+	"github.com/mdp/qrterminal/v3"
 	"github.com/spf13/cobra"
 )
 
@@ -24,12 +26,15 @@ func Command() *cobra.Command {
 				return
 			}
 
-			fmt.Println(response)
+			if len(response) > 0 {
+				fmt.Println(response)
+			}
 		},
 	}
 
 	cmd.Flags().Duration("ttl", 0, "Remove a bucket after a period of time")
 	cmd.Flags().BoolP("url", "u", false, "Return a share url as response")
+	cmd.Flags().BoolP("qr", "q", false, "Return a qr code with the url as response")
 
 	return cmd
 }
@@ -41,6 +46,11 @@ func run(cmd *cobra.Command, args []string) (string, error) {
 	}
 
 	isUrl, err := cmd.Flags().GetBool("url")
+	if err != nil {
+		return "", err
+	}
+
+	isQr, err := cmd.Flags().GetBool("qr")
 	if err != nil {
 		return "", err
 	}
@@ -79,13 +89,25 @@ func run(cmd *cobra.Command, args []string) (string, error) {
 		}
 	}
 
-	if isUrl {
-		h, err := hog.Get()
+	var h hog.Hog
+	var url string
+
+	if isUrl || isQr {
+		h, err = hog.Get()
 		if err != nil {
 			return "", err
 		}
 
-		return fmt.Sprintf("%s://%s:%d/download/%s", h.Protocol, h.Domain, h.Port, bucketID), nil
+		url = fmt.Sprintf("%s://%s:%d/download/%s", h.Protocol, h.Domain, h.Port, bucketID)
+		bucketID = ""
+	}
+
+	if isQr {
+		qrterminal.Generate(url, qrterminal.M, os.Stdout)
+	}
+
+	if isUrl {
+		fmt.Println(url)
 	}
 
 	return bucketID, nil
