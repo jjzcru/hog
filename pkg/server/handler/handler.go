@@ -2,7 +2,6 @@ package handler
 
 import (
 	"archive/zip"
-	"context"
 	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -16,14 +15,6 @@ import (
 	"path/filepath"
 	"strconv"
 )
-
-func AddAuth(next http.Handler, token string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		// ctx := context.WithValue(r.Context(), graphql.TokenKey, token)
-		ctx := context.WithValue(r.Context(), AuthorizationKey, r.Header.Get("auth-token"))
-		next.ServeHTTP(w, r.WithContext(ctx))
-	}
-}
 
 // Qr returns a qr code to the file to download
 func Qr(hogPath string) http.HandlerFunc {
@@ -45,6 +36,16 @@ func Qr(hogPath string) http.HandlerFunc {
 				serverError(w, err)
 				return
 			}
+		}
+
+		domain := r.URL.Query().Get("domain")
+		if len(domain) > 0 {
+			h.Domain = domain
+		}
+
+		protocol := r.URL.Query().Get("protocol")
+		if len(protocol) > 0 && (protocol == "http" || protocol == "https") {
+			h.Protocol = protocol
 		}
 
 		if h.Buckets == nil {
