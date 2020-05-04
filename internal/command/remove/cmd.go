@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Command returns a cobra command for `init` sub command
+// Command returns a cobra command for `remove` sub command
 func Command() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "remove",
@@ -45,7 +45,7 @@ func run(cmd *cobra.Command, ids []string) error {
 		return err
 	}
 
-	hogPath, err := hog.GetPath()
+	hogPath, err := hog.Path()
 	if err != nil {
 		return err
 	}

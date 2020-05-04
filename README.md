@@ -70,7 +70,8 @@ First you need to start the server so the application is able to serve the files
 hog start -d
 ```
 
-By default the application will run at port `1618` and the endpoint for download is `/download/{BucketID}`. For more information about how the `start` command works go to [start][start] documentation.
+By default the application will run at port `1618` and the endpoint for download is `/download/{BucketID}`. For more 
+information about how the `start` command works go to [start][start] documentation.
 
 #### Add files
 
@@ -146,7 +147,9 @@ link and the file will automatically download.
 | -------           | ------                                 | -------                          |
 | [add][add]        | Group files in a bucket                | `hog add [files] [flags]`        |
 | [bucket][bucket]  | Display the buckets and their files    | `hog bucket [flags]`             |
+| [get][get]        | Get hog configuration values           | `hog get [command]`              |
 | [remove][remove]  | Remove a bucket by its id              | `hog remove {id} [flags]`        |
+| [set][set]        | Set hog configuration values           | `hog set [command]`              |
 | [start][start]    | Start hog service                      | `hog start [flags]`              |
 | [update][update]  | Update the files in a bucket by its id | `hog update {id} [files] [flags]`|
 | [version][version]| Display version number                 | `hog version [flags]`            |
@@ -167,7 +170,9 @@ To learn more about the progress and what is being planned go to [Projects][proj
 
 [add]: docs/commands/add.md
 [bucket]: docs/commands/bucket.md
+[get]: docs/commands/get.md
 [remove]: docs/commands/remove.md
+[set]: docs/commands/set.md
 [start]: docs/commands/start.md
 [update]: docs/commands/update.md
 [version]: docs/commands/version.md
