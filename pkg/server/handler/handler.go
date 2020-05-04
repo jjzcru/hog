@@ -3,15 +3,18 @@ package handler
 import (
 	"archive/zip"
 	"context"
+	"errors"
 	"fmt"
 	"github.com/gorilla/mux"
 	"github.com/jjzcru/hog/pkg/hog"
 	"github.com/jjzcru/hog/pkg/utils"
+	qrcode "github.com/skip2/go-qrcode"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 )
 
 func AddAuth(next http.Handler, token string) http.HandlerFunc {
@@ -22,9 +25,51 @@ func AddAuth(next http.Handler, token string) http.HandlerFunc {
 	}
 }
 
+// Qr returns a qr code to the file to download
 func Qr(hogPath string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var err error
+		vars := mux.Vars(r)
+		id := vars["id"]
 
+		h, err := hog.FromPath(hogPath)
+		if err != nil {
+			serverError(w, err)
+			return
+		}
+
+		port := r.URL.Query().Get("port")
+		if len(port) > 0 {
+			h.Port, err = strconv.Atoi(port)
+			if err != nil {
+				serverError(w, err)
+				return
+			}
+		}
+
+		if h.Buckets == nil {
+			h.Buckets = map[string][]string{}
+		}
+
+		if _, ok := h.Buckets[id]; !ok {
+			notFoundError(w, fmt.Errorf("id '%s' not found", id))
+			return
+		}
+
+		url := fmt.Sprintf("%s://%s:%d/download/%s", h.Protocol, h.Domain, h.Port, id)
+
+		png, err := qrcode.Encode(url, qrcode.Medium, 256)
+		if err != nil {
+			serverError(w, err)
+			return
+		}
+
+		w.Header().Set("Content-Type", "image/jpeg")
+		w.Header().Set("Content-Length", strconv.Itoa(len(png)))
+		if _, err := w.Write(png); err != nil {
+			serverError(w, errors.New("unable to write image"))
+			return
+		}
 	}
 }
 

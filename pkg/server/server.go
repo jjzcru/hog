@@ -44,6 +44,8 @@ func Start(port int, hogPath string, token string) error {
 	r := mux.NewRouter()
 	r.HandleFunc("/download/{id}", handler.Download(hogPath))
 	r.HandleFunc("/download/{id}/", handler.Download(hogPath))
+	r.HandleFunc("/qr/{id}", handler.Qr(hogPath))
+	r.HandleFunc("/qr/{id}/", handler.Qr(hogPath))
 
 	if len(token) > 0 {
 		fmt.Println(strings.Join([]string{
