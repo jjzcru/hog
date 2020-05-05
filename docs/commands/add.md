@@ -22,10 +22,20 @@ hog add test.jpg /home/example/download/file.pdf -u
 ```
 
 ## Flags
-| Flag         | Short code | Description                            | 
-| -------      | ------     | -------                                | 
-| [ttl](#ttl)  |            | Remove a bucket after a period of time |
-| [url](#url)  | u          | Return a share url as response         |
+| Flag         | Short code | Description                               | 
+| -------      | ------     | -------                                   | 
+| [qr](#qr)    | q          | Return a qr code with the url as response |
+| [ttl](#ttl)  |            | Remove a bucket after a period of time    |
+| [url](#url)  | u          | Return a share url as response            |
+
+### qr
+
+This flag if enable will return an qr with the url to share, created by using the configuration inside `.hog.yml`. 
+
+```
+hog add test.jpg --qr
+hog add test.jpg test_1.png -q
+```
 
 ### ttl
 

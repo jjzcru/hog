@@ -4,16 +4,17 @@ import (
 	"archive/zip"
 	"errors"
 	"fmt"
-	"github.com/gorilla/mux"
-	"github.com/jjzcru/hog/pkg/hog"
-	"github.com/jjzcru/hog/pkg/utils"
-	qrcode "github.com/skip2/go-qrcode"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
+
+	"github.com/gorilla/mux"
+	"github.com/jjzcru/hog/pkg/hog"
+	"github.com/jjzcru/hog/pkg/utils"
+	qrcode "github.com/skip2/go-qrcode"
 )
 
 // Qr returns a qr code to the file to download
@@ -74,6 +75,7 @@ func Qr(hogPath string) http.HandlerFunc {
 	}
 }
 
+// Download return a binary file
 func Download(hogPath string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var err error
