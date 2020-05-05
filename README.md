@@ -20,6 +20,7 @@ Since it's written in [Go][go], most of the commands runs across multiple operat
   * [Getting Started](#getting-started)
     + [Installation](#installation)
     + [Usage](#usage)
+    + [Endpoints](#endpoints)
   * [Syntax](#syntax)
   * [Use Cases](#use-cases)
   * [Commands](#commands)
@@ -100,6 +101,50 @@ http://192.168.1.101:1618/download/2iez0Wa
 // For domain
 http://my.domain.com:1618/download/2iez0Wa
 ```
+
+### Endpoints
+
+#### Download
+This endpoint will enable the user to download the content of a bucket by its id. 
+
+```
+/download/{BucketID}
+```
+
+##### Example
+```
+http://localhost:1618/download/2iez0Wa
+http://192.168.1.101:1618/download/2iez0Wa
+https://example.com:1618/download/2iez0Wa
+https://example.com/download/2iez0Wa
+```
+
+#### Qr
+This endpoint will return a webpage with a qr code as image. So it is easier to share links with cellphones.
+
+This uses the value inside the configuration file `.hog.yml` to generate the share url, but you can overwrite the 
+values by sending query params with the values you wish to overwrite. This are:
+- `protocol`
+- `domain`
+- `port`
+
+```
+/qr/{BucketID}
+```
+
+##### Example
+
+```
+http://localhost:1618/qr/2iez0Wa
+http://localhost:1618/qr/2iez0Wa?protocol=http
+http://localhost:1618/qr/2iez0Wa?protocol=http&domain=example.com
+http://localhost:1618/qr/2iez0Wa?protocol=http&domain=example.com&port=80
+```
+
+You need to play arround with this depending on how other people are going to reach the server.
+
+
+
 
 ## Syntax
 The syntax consists of:
