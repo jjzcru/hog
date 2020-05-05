@@ -20,6 +20,7 @@ Since it's written in [Go][go], most of the commands runs across multiple operat
   * [Getting Started](#getting-started)
     + [Installation](#installation)
     + [Usage](#usage)
+    + [Endpoints](#endpoints)
   * [Syntax](#syntax)
   * [Use Cases](#use-cases)
   * [Commands](#commands)
@@ -101,6 +102,50 @@ http://192.168.1.101:1618/download/2iez0Wa
 http://my.domain.com:1618/download/2iez0Wa
 ```
 
+### Endpoints
+
+#### Download
+This endpoint will enable the user to download the content of a bucket by its id. 
+
+```
+/download/{BucketID}
+```
+
+##### Example
+```
+http://localhost:1618/download/2iez0Wa
+http://192.168.1.101:1618/download/2iez0Wa
+https://example.com:1618/download/2iez0Wa
+https://example.com/download/2iez0Wa
+```
+
+#### Qr
+This endpoint will return a webpage with a qr code as image. So it is easier to share links with cellphones.
+
+This uses the value inside the configuration file `.hog.yml` to generate the share url, but you can overwrite the 
+values by sending query params with the values you wish to overwrite. This are:
+- `protocol`
+- `domain`
+- `port`
+
+```
+/qr/{BucketID}
+```
+
+##### Example
+
+```
+http://localhost:1618/qr/2iez0Wa
+http://localhost:1618/qr/2iez0Wa?protocol=http
+http://localhost:1618/qr/2iez0Wa?protocol=http&domain=example.com
+http://localhost:1618/qr/2iez0Wa?protocol=http&domain=example.com&port=80
+```
+
+You need to play arround with this depending on how other people are going to reach the server.
+
+
+
+
 ## Syntax
 The syntax consists of:
 - `domain`: The domain that is use to reference the address of the machine, this value is used by some sharing 
@@ -141,6 +186,9 @@ Another use case is that you want to share a file from your computer to your sma
 to go search for a cable, to then connect your PC, go to your file system and copy the file. Instead just send you the 
 link and the file will automatically download.
 
+`hog` also support share links as `qr` code either from the terminal or an endpoint. This make it easier to download 
+files from a cellphone, where you only need to open the camera and scan the `qr` code.
+
 ## Commands
 
 | Command           | Description                            | Syntax                           |
@@ -150,6 +198,7 @@ link and the file will automatically download.
 | [get][get]        | Get hog configuration values           | `hog get [command]`              |
 | [remove][remove]  | Remove a bucket by its id              | `hog remove {id} [flags]`        |
 | [set][set]        | Set hog configuration values           | `hog set [command]`              |
+| [share][share]    | Share a bucket by its id               | `hog share {id} [flags]`         |
 | [start][start]    | Start hog service                      | `hog start [flags]`              |
 | [update][update]  | Update the files in a bucket by its id | `hog update {id} [files] [flags]`|
 | [version][version]| Display version number                 | `hog version [flags]`            |
@@ -173,6 +222,7 @@ To learn more about the progress and what is being planned go to [Projects][proj
 [get]: docs/commands/get.md
 [remove]: docs/commands/remove.md
 [set]: docs/commands/set.md
+[share]: docs/commands/share.md
 [start]: docs/commands/start.md
 [update]: docs/commands/update.md
 [version]: docs/commands/version.md
