@@ -186,6 +186,9 @@ Another use case is that you want to share a file from your computer to your sma
 to go search for a cable, to then connect your PC, go to your file system and copy the file. Instead just send you the 
 link and the file will automatically download.
 
+`hog` also support share links as `qr` code either from the terminal or an endpoint. This make it easier to download 
+files from a cellphone, where you only need to open the camera and scan the `qr` code.
+
 ## Commands
 
 | Command           | Description                            | Syntax                           |
@@ -195,6 +198,7 @@ link and the file will automatically download.
 | [get][get]        | Get hog configuration values           | `hog get [command]`              |
 | [remove][remove]  | Remove a bucket by its id              | `hog remove {id} [flags]`        |
 | [set][set]        | Set hog configuration values           | `hog set [command]`              |
+| [share][share]    | Share a bucket by its id               | `hog share {id} [flags]`         |
 | [start][start]    | Start hog service                      | `hog start [flags]`              |
 | [update][update]  | Update the files in a bucket by its id | `hog update {id} [files] [flags]`|
 | [version][version]| Display version number                 | `hog version [flags]`            |
@@ -218,6 +222,7 @@ To learn more about the progress and what is being planned go to [Projects][proj
 [get]: docs/commands/get.md
 [remove]: docs/commands/remove.md
 [set]: docs/commands/set.md
+[share]: docs/commands/share.md
 [start]: docs/commands/start.md
 [update]: docs/commands/update.md
 [version]: docs/commands/version.md
