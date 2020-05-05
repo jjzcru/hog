@@ -17,6 +17,7 @@ import (
 	"github.com/logrusorgru/aurora"
 )
 
+// Start the server from a particular file
 func Start(port int, hogPath string, token string) error {
 	if !IsPortOpen(port) {
 		return fmt.Errorf("another application is running on port %d", port)
@@ -83,6 +84,7 @@ func Start(port int, hogPath string, token string) error {
 	return srv.ListenAndServe()
 }
 
+// IsPortOpen check if a port is open in the current machine
 func IsPortOpen(port int) bool {
 	l, err := net.Listen("tcp", ":"+fmt.Sprintf("%d", port))
 	defer func() {

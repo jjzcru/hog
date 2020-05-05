@@ -1,3 +1,20 @@
+## [v0.3.0](https://github.com/jjzcru/hog/tree/v0.3.0) (2020-05-04)
+[Release](https://github.com/jjzcru/hog/releases/tag/v0.3.0)
+
+**Commands 🤖:**
+- **[share]** Create command
+
+**Documentation 📖:**
+- **[share]** Create documentation
+- **[add]** Update documentation for the `qr` flag
+- Add `Endpoints` section in the `README.md`
+
+**Flags 🚩:**
+- **--qr** Add flag to **[add]** command
+
+**Misc 👾:**
+- **qr** Add `qr` endpoint in server
+
 ## [v0.2.0](https://github.com/jjzcru/hog/tree/v0.2.0) (2020-05-03)
 [Release](https://github.com/jjzcru/hog/releases/tag/v0.2.0)
 
