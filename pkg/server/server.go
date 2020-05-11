@@ -86,15 +86,11 @@ func Start(port int, hogPath string, token string) error {
 
 // IsPortOpen check if a port is open in the current machine
 func IsPortOpen(port int) bool {
-	l, err := net.Listen("tcp", ":"+fmt.Sprintf("%d", port))
-	defer func() {
-		if l != nil {
-			err = l.Close()
-			if err != nil {
-				fmt.Println(err.Error())
-			}
-		}
-	}()
+	conn, err := net.Dial("tcp", fmt.Sprintf("127.0.0.1:%d", port))
+	if err != nil {
+		return true
+	}
+	defer conn.Close()
 
-	return err == nil
+	return false
 }
