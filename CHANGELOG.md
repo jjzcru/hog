@@ -1,3 +1,8 @@
+## [v0.3.1](https://github.com/jjzcru/hog/tree/v0.3.1) (2020-06-14)
+[Release](https://github.com/jjzcru/hog/releases/tag/v0.3.1)
+**Misc 👾:**
+- Add support for `ARM`
+
 ## [v0.3.0](https://github.com/jjzcru/hog/tree/v0.3.0) (2020-05-04)
 [Release](https://github.com/jjzcru/hog/releases/tag/v0.3.0)
 
